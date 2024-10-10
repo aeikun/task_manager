@@ -10,33 +10,36 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-from pathlib import Path
-import django_heroku
 import os
+import django_heroku
+import dj_database_url
+from pathlib import Path
 
-# Activate Django-Heroku.
-django_heroku.settings(locals())
 
-# Security settings for deployment
-ALLOWED_HOSTS = ['your-heroku-app-name.herokuapp.com']
-
-# This setting is needed to disable Django's ability to collect static files in development.
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Use environment variables for sensitive data
+SECRET_KEY = os.getenv('@412d452d49B#', 'django-insecure-default')
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+ALLOWED_HOSTS = ['aeiformanage.herokuapp.com']
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7qvilh!w%u672mkm86g3tu)0fkxb6(h3ee^j*os_nb298a9^@7'
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME', 'task_manager_db'),
+        'USER': os.getenv('DB_USER', 'aeikun'),
+        'PASSWORD': os.getenv('DB_PASSWORD', '@412d452d49B#'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),  # Use 'localhost' for local development
+        'PORT': os.getenv('DB_PORT', '5432'),       # Default PostgreSQL port
+    }
+}
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
-ALLOWED_HOSTS = []
+# Static file settings for Heroku
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
 
 
 # Application definition
@@ -60,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'task_manager.urls'
@@ -81,17 +85,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'task_manager.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 
 # Password validation
@@ -125,11 +118,6 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = 'static/'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -140,3 +128,6 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
