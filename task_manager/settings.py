@@ -3,34 +3,34 @@ import django_heroku
 import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
-
+from datetime import timedelta
+from decouple import config
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Use environment variables for sensitive data
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default')  # Default for development
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-default')
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['aeiformanage.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='aeiformanage.herokuapp.com,localhost,127.0.0.1').split(',')
 
 # Configure the database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',  # Specify PostgreSQL as the database engine
-        'NAME': os.getenv('DB_NAME', 'your_local_db_name'),  # Default local database name
-        'USER': os.getenv('DB_USER', 'your_local_db_user'),  # Default local database user
-        'PASSWORD': os.getenv('DB_PASSWORD', 'your_local_db_password'),  # Default local database password
-        'HOST': os.getenv('DB_HOST', 'localhost'),  # Default host for local database
-        'PORT': os.getenv('DB_PORT', '5432'),  # Default PostgreSQL port
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME', default='task_manager_db'),
+        'USER': config('DB_USER', default='aeikun'),
+        'PASSWORD': config('DB_PASSWORD', default='@412d452d49B#'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
     }
 }
 
-# If DATABASE_URL is set (Heroku), overwrite the local database settings
 if os.getenv('DATABASE_URL'):
     DATABASES['default'] = dj_database_url.config(
-        default=os.getenv('DATABASE_URL'),  # Use DATABASE_URL from Heroku environment variables
+        default=os.getenv('DATABASE_URL'),
         conn_max_age=600,
         ssl_require=True
     )
@@ -38,6 +38,7 @@ if os.getenv('DATABASE_URL'):
 # Static file settings for Heroku
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Application definition
 INSTALLED_APPS = [
@@ -50,21 +51,25 @@ INSTALLED_APPS = [
     'rest_framework',
     'tasks',
     'corsheaders',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # For serving static files in production
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True  # Consider changing this for production
+# CORS_ALLOWED_ORIGINS = [
+#     "https://your-production-domain.com",
+# ]
 
 ROOT_URLCONF = 'task_manager.urls'
 
@@ -114,15 +119,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Remove if not using JWT
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
-# Optional: Configure the JWT token lifetime (optional, but useful)
-from datetime import timedelta
-
+# JWT settings (if applicable)
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=3),  # Set your desired token lifetime
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=3),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
