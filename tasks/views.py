@@ -3,6 +3,12 @@ from .models import Task
 from .serializers import TaskSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.http import JsonResponse
+from rest_framework import generics
+
+
+def api_root(request):
+    return JsonResponse({"message": "Welcome to the Task Manager API"})
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
@@ -19,3 +25,11 @@ class TaskViewSet(viewsets.ModelViewSet):
         task.completed_at = None if task.status == 'Pending' else timezone.now()
         task.save()
         return Response({'status': task.status})
+
+class TaskList(generics.ListCreateAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+
+class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
