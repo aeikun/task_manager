@@ -6,15 +6,16 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Use environment variables for sensitive data
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default')  # Changed to use SECRET_KEY from environment variables
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
+# Allow all hosts for development purposes; tighten this in production
 ALLOWED_HOSTS = ['aeiformanage.herokuapp.com']
 
 # Configure the database
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'),  # Use DATABASE_URL from Heroku environment variables
+        default=os.getenv('DATABASE_URL'),  # Heroku DATABASE_URL environment variable
         conn_max_age=600,
         ssl_require=True
     )
@@ -98,5 +99,5 @@ REST_FRAMEWORK = {
     ],
 }
 
-# Activate Django-Heroku.
+# Activate Django-Heroku
 django_heroku.settings(locals())
