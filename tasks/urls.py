@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import TaskViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-#from .views import TaskList, TaskDetail
+from .views import index
 
 # Create a router and register the TaskViewSet
 router = DefaultRouter()
@@ -16,4 +16,5 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # path('tasks/', TaskList.as_view(), name='task-list'),  # Example for listing tasks
     # path('tasks/<int:pk>/', TaskDetail.as_view(), name='task-detail'),
+    path('', index, name='index'),
 ]

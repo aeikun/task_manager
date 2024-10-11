@@ -24,6 +24,8 @@ urlpatterns = [
     # Include the task_manager/tasks/urls.py
     path('api/', include('tasks.urls')),  # This includes all the task-related URLs
     
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+
     path('', api_root, name='api-root'),
     
     # Add Swagger documentation route
