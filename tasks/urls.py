@@ -9,6 +9,7 @@ router = DefaultRouter()
 router.register(r'tasks', TaskViewSet, basename='task')
 
 urlpatterns = [
+    path('', index, name='index'),
     # Include the router URLs for tasks
     path('', include(router.urls)),
     # JWT authentication endpoints
@@ -16,5 +17,4 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # path('tasks/', TaskList.as_view(), name='task-list'),  # Example for listing tasks
     # path('tasks/<int:pk>/', TaskDetail.as_view(), name='task-detail'),
-    path('', index, name='index'),
 ]

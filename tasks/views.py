@@ -9,7 +9,15 @@ from django.utils import timezone
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework import status
+from django.shortcuts import render
+from django.http import HttpResponse
 
+def index(request):
+    return HttpResponse("Hello, world!")
+
+
+def index(request):
+    return render(request, 'index.html')
 
 def api_root(request):
     return JsonResponse({"message": "Welcome to the Task Manager API"})
