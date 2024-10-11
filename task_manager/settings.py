@@ -57,6 +57,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework.authtoken',
     'drf_yasg',
+    'admin_interface',
+    'colorfield',
+    'django.contrib.admin',
 ]
 
 MIDDLEWARE = [
