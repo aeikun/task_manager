@@ -59,7 +59,6 @@ INSTALLED_APPS = [
     'drf_yasg',
     'admin_interface',
     'colorfield',
-    'django.contrib.admin',
 ]
 
 MIDDLEWARE = [
