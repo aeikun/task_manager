@@ -6,6 +6,9 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework import generics
 from django.utils import timezone
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework import status
 
 
 def api_root(request):
@@ -27,6 +30,15 @@ class TaskViewSet(viewsets.ModelViewSet):
         task.save()
         return Response({'status': task.status})
 
+    def get(self, request):
+        try:
+            # Your logic to retrieve tasks
+            tasks = Task.objects.all()
+            serializer = TaskSerializer(tasks, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 class TaskList(generics.ListCreateAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
@@ -34,3 +46,11 @@ class TaskList(generics.ListCreateAPIView):
 class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key})
