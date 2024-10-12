@@ -14,5 +14,5 @@ urlpatterns = [
     # JWT authentication endpoints
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Token obtain endpoint
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Token refresh endpoint
-    path('api/', include(router.urls)),  # Include the router URLs for tasks
+    path('', include(router.urls)),  # Include the router URLs for tasks
 ]
