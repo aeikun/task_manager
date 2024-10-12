@@ -27,7 +27,7 @@ def index(request):
     return HttpResponse("Hello, world!")
 
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'tasks/index.html')
 
 def api_root(request):
     return JsonResponse({"message": "Welcome to the Task Manager API"})
