@@ -6,6 +6,7 @@ class Task(models.Model):
         ('Low', 'Low'),
         ('Medium', 'Medium'),
         ('High', 'High'),
+        ('Urgent', 'Urgent'),
     ]
 
     STATUS_CHOICES = [
