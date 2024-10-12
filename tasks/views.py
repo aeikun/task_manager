@@ -11,10 +11,16 @@ from rest_framework.authtoken.models import Token
 from rest_framework import status
 from django.shortcuts import render
 from django.http import HttpResponse
+from rest_framework.views import APIView
+
+
+class YourApiView(APIView):
+    def get(self, request):
+        # Your logic here
+        return Response({"message": "Hello, World!"}, status=status.HTTP_200_OK)
 
 def index(request):
     return HttpResponse("Hello, world!")
-
 
 def index(request):
     return render(request, 'index.html')
