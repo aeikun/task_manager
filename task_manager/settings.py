@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'admin_interface',
     'colorfield',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [

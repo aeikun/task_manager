@@ -18,4 +18,4 @@ urlpatterns = [
     # Uncomment and adjust if you want to add specific task-related paths
     # path('tasks/', TaskList.as_view(), name='task-list'),  
     # path('tasks/<int:pk>/', TaskDetail.as_view(), name='task-detail'),
-] + router.urls
+]
