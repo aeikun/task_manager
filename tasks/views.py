@@ -16,9 +16,13 @@ from rest_framework.views import APIView
 
 class YourApiView(APIView):
     def get(self, request):
-        # Your logic here
-        return Response({"message": "Hello, World!"}, status=status.HTTP_200_OK)
-
+        # Add your logic here; e.g., returning some data
+        try:
+            data = {"message": "Hello, World!"}  # Replace with your actual logic
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 def index(request):
     return HttpResponse("Hello, world!")
 
